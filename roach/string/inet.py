@@ -3,20 +3,21 @@
 # See the file 'docs/LICENSE.txt' for copying permission.
 
 import re
+import six
 import socket
 
 from roach.string.bin import uint32
 
 ipv4_regex = re.compile(
-    "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}"
-    "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+    b"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}"
+    b"([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
 )
 
 def ipv4(s):
-    if isinstance(s, basestring):
+    if isinstance(s, (bytes, six.string_types)):
         if len(s) == 4:
             return socket.inet_ntoa(s)
         if re.match(ipv4_regex, s):
-            return s
-    if isinstance(s, (int, long)):
+            return s.decode()
+    if isinstance(s, six.integer_types):
         return socket.inet_ntoa(uint32(s)[::-1])

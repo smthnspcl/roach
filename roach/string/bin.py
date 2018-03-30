@@ -2,6 +2,7 @@
 # This file is part of Roach - https://github.com/jbremer/roach.
 # See the file 'docs/LICENSE.txt' for copying permission.
 
+import six
 import struct
 
 from roach.string.ops import Padding, hex, unhex
@@ -14,10 +15,10 @@ class IntWorker(object):
         self.mul = mul
 
     def __call__(self, value):
-        if isinstance(value, (int, long)):
+        if isinstance(value, six.integer_types):
             return struct.pack(self.fmt, value)
 
-        count = len(value) / self.size
+        count = len(value) // self.size
         # TODO Should we return something else?
         if not count:
             return
@@ -30,35 +31,35 @@ class IntWorker(object):
         return self.__class__(other)
 
 class Int8(IntWorker):
-    fmt = "b"
+    fmt = b"b"
     size = 1
 
 class UInt8(IntWorker):
-    fmt = "B"
+    fmt = b"B"
     size = 1
 
 class Int16(IntWorker):
-    fmt = "h"
+    fmt = b"h"
     size = 2
 
 class UInt16(IntWorker):
-    fmt = "H"
+    fmt = b"H"
     size = 2
 
 class Int32(IntWorker):
-    fmt = "i"
+    fmt = b"i"
     size = 4
 
 class UInt32(IntWorker):
-    fmt = "I"
+    fmt = b"I"
     size = 4
 
 class Int64(IntWorker):
-    fmt = "q"
+    fmt = b"q"
     size = 8
 
 class UInt64(IntWorker):
-    fmt = "Q"
+    fmt = b"Q"
     size = 8
 
 int8 = Int8()
@@ -71,13 +72,13 @@ int64 = Int64()
 uint64 = UInt64()
 
 def bigint(s, bitsize):
-    if isinstance(s, (int, long)):
-        return Padding.null(unhex("%x" % s)[::-1], bitsize / 8)
+    if isinstance(s, six.integer_types):
+        return Padding.null(unhex("%x" % s)[::-1], bitsize // 8)
 
     if len(s) < bitsize / 8:
         return
 
-    return int(hex(s[:bitsize / 8][::-1]), 16)
+    return int(hex(s[:bitsize // 8][::-1]), 16)
 
 # TODO Do we need any love on top of this?
 unpack = struct.unpack

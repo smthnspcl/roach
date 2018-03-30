@@ -3,6 +3,7 @@
 # See the file 'docs/LICENSE.txt' for copying permission.
 
 import pefile
+import six
 
 from roach.procmem import ProcessMemoryPE, ProcessMemory
 
@@ -15,6 +16,19 @@ class OurSectionStructure(pefile.SectionStructure):
 
 OrigSectionStructure = pefile.SectionStructure
 pefile.SectionStructure = OurSectionStructure
+
+class FakeByteArray(bytearray):
+    """We patch the bytearray class because the new pefile attempts to do
+    something like collections.Counter(bytearray(procmempe)) which we're not
+    particularly interested in."""
+
+    def __init__(self, value=b""):
+        if isinstance(value, ProcessMemoryPE):
+            bytearray.__init__(self, b"")
+        else:
+            bytearray.__init__(self, value)
+
+pefile.bytearray = FakeByteArray
 
 class PE(object):
     """Wrapper around pefile.PE; accepts either a string (raw file contents) or
@@ -63,7 +77,7 @@ class PE(object):
 
     def section(self, name):
         for section in self.pe.sections:
-            if section.Name.rstrip("\x00") == name:
+            if section.Name.rstrip(b"\x00") == name:
                 return section
 
     def resources(self, name):
@@ -71,10 +85,10 @@ class PE(object):
         name_int = lambda e1, e2, e3: e2.struct.Name == name
         type_int = lambda e1, e2, e3: e1.id == type_id
 
-        if isinstance(name, basestring):
-            if name.startswith("RT_"):
+        if isinstance(name, (bytes, six.string_types)):
+            if name.startswith(b"RT_"):
                 compare = type_int
-                type_id = pefile.RESOURCE_TYPE[name]
+                type_id = pefile.RESOURCE_TYPE[name.decode()]
             else:
                 compare = name_str
         else:

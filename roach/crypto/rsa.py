@@ -3,6 +3,7 @@
 # See the file 'docs/LICENSE.txt' for copying permission.
 
 import io
+import six
 
 from Crypto.PublicKey.RSA import RSAImplementation
 
@@ -32,7 +33,7 @@ class SimpleBlob(BaseBlob):
     pass
 
 class PublicKeyBlob(BaseBlob):
-    magic = "RSA1"
+    magic = b"RSA1"
 
     def __init__(self):
         BaseBlob.__init__(self)
@@ -45,20 +46,23 @@ class PublicKeyBlob(BaseBlob):
             return
 
         self.bitsize = uint32(header[4:8])
-        self.e = long(uint32(header[8:12]))
+        if six.PY2:
+            self.e = long(uint32(header[8:12]))
+        else:
+            self.e = uint32(header[8:12])
 
-        n = buf.read(self.bitsize / 8)
-        if len(n) != self.bitsize / 8:
+        n = buf.read(self.bitsize // 8)
+        if len(n) != self.bitsize // 8:
             return
 
         self.n = bigint(n, self.bitsize)
-        return 12 + self.bitsize / 8
+        return 12 + self.bitsize // 8
 
     def export_key(self):
         return RSA.export_key(self.n, self.e)
 
 class PrivateKeyBlob(PublicKeyBlob):
-    magic = "RSA2"
+    magic = b"RSA2"
 
     def __init__(self):
         PublicKeyBlob.__init__(self)
@@ -74,27 +78,27 @@ class PrivateKeyBlob(PublicKeyBlob):
         if not off:
             return
 
-        self.p1 = bigint(buf.read(self.bitsize / 16), self.bitsize / 2)
+        self.p1 = bigint(buf.read(self.bitsize // 16), self.bitsize // 2)
         if self.p1 is None:
             return
 
-        self.p2 = bigint(buf.read(self.bitsize / 16), self.bitsize / 2)
+        self.p2 = bigint(buf.read(self.bitsize // 16), self.bitsize // 2)
         if self.p2 is None:
             return
 
-        self.exp1 = bigint(buf.read(self.bitsize / 16), self.bitsize / 2)
+        self.exp1 = bigint(buf.read(self.bitsize // 16), self.bitsize // 2)
         if self.exp1 is None:
             return
 
-        self.exp2 = bigint(buf.read(self.bitsize / 16), self.bitsize / 2)
+        self.exp2 = bigint(buf.read(self.bitsize // 16), self.bitsize // 2)
         if self.exp2 is None:
             return
 
-        self.coeff = bigint(buf.read(self.bitsize / 16), self.bitsize / 2)
+        self.coeff = bigint(buf.read(self.bitsize // 16), self.bitsize // 2)
         if self.coeff is None:
             return
 
-        self.d = bigint(buf.read(self.bitsize / 8), self.bitsize)
+        self.d = bigint(buf.read(self.bitsize // 8), self.bitsize)
         if self.d is None:
             return
 
@@ -161,8 +165,11 @@ class RSA(object):
 
     @staticmethod
     def export_key(n, e, d=None, p=None, q=None, crt=None):
-        wrap = lambda x: None if x is None else long(x)
-        tup = wrap(n), wrap(e), wrap(d), wrap(p), wrap(q), wrap(crt)
+        if six.PY2:
+            wrap = lambda x: None if x is None else long(x)
+            tup = wrap(n), wrap(e), wrap(d), wrap(p), wrap(q), wrap(crt)
+        else:
+            tup = n, e, d, p, q, crt
         return RSA_.construct(tup).exportKey()
 
 RSA_ = RSAImplementation(use_fast_math=False)

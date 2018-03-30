@@ -19,7 +19,7 @@ def test_structure():
         ]
 
     assert S1.sizeof() == 135
-    a = S1.from_buffer_copy("A"*135)
+    a = S1.from_buffer_copy(b"A"*135)
     assert a.a == 0x41
     assert a.b == 0x4141
     assert a.c == 0x41414141
@@ -40,13 +40,13 @@ def test_structure():
         ]
 
     assert S2.sizeof() == 175
-    a = S2.from_buffer_copy("A"*175)
+    a = S2.from_buffer_copy(b"A"*175)
     assert a.a.a == 0x41
     assert a.a.b == 0x4141
     assert a.a.c == 0x41414141
     assert a.a.d[:] == [0x41] * 128
     assert a.b == 0x4141414141414141
-    assert a.c == "A"*32
+    assert a.c == b"A"*32
     assert a.as_dict() == {
         "a": {
             "a": 0x41,
@@ -55,7 +55,7 @@ def test_structure():
             "d": [0x41] * 128,
         },
         "b": 0x4141414141414141,
-        "c": "A"*32,
+        "c": b"A"*32,
     }
 
     class S3(Structure):
@@ -67,7 +67,7 @@ def test_structure():
         ]
 
     assert S3.sizeof() == 314
-    a = S3.from_buffer_copy("B"*314)
+    a = S3.from_buffer_copy(b"B"*314)
     assert a.a.a == 0x42
     assert a.b.a.a == 0x42
     assert a.as_dict() == {
@@ -85,7 +85,7 @@ def test_structure():
                 "d": [0x42] * 128,
             },
             "b": 0x4242424242424242,
-            "c": "B"*32,
+            "c": b"B"*32,
         },
         "c": 0x42424242,
     }
@@ -104,7 +104,7 @@ def test_int_wrappers():
         ]
 
     assert I1.sizeof() == 32
-    a = I1.from_buffer_copy("A"*32)
+    a = I1.from_buffer_copy(b"A"*32)
     assert a.a == 0x41
     assert a.b == 0x41
     assert a.c == 0x4141
@@ -114,7 +114,7 @@ def test_int_wrappers():
     assert a.g == 0x4141414141414141
     assert a.h == 0x4141414141414141
 
-    a = I1.from_buffer_copy("\xff"*32)
+    a = I1.from_buffer_copy(b"\xff"*32)
     assert a.a == -1
     assert a.b == 0xff
     assert a.c == -1
@@ -142,7 +142,7 @@ def test_int_wrappers():
     assert I2.sizeof() == 48
     assert I3.sizeof() == 44
 
-    a = I2.from_buffer_copy("B"*76)
+    a = I2.from_buffer_copy(b"B"*76)
     assert a.i1.a == 0x42
     assert a.i1.h == 0x4242424242424242
     assert a.as_dict() == {
@@ -170,13 +170,13 @@ class test_multiply():
         ]
 
     assert M.sizeof() == 40
-    m = M.parse("A"*8 + "B"*16 + "C"*15 + "\x00")
+    m = M.parse(b"A"*8 + b"B"*16 + b"C"*15 + b"\x00")
     assert m.a[:] == [0x41] * 8
 
     # We can also omit the [:] part.
     assert m.b == [0x42424242] * 4
 
-    assert m.c == "C"*15
+    assert m.c == b"C"*15
 
 def test_nested_asdict():
     class I1(Structure):
@@ -193,7 +193,7 @@ def test_nested_asdict():
         ]
 
     assert I2.sizeof() == 8
-    a = I2.from_buffer_copy("C"*8)
+    a = I2.from_buffer_copy(b"C"*8)
     assert a.i1.as_dict() == {
         "a": 0x43,
         "b": 0x43,

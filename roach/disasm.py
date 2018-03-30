@@ -4,6 +4,7 @@
 
 import capstone.x86
 import collections
+import six
 
 Memory = collections.namedtuple(
     "Memory", ("size", "base", "scale", "index", "disp")
@@ -74,13 +75,16 @@ class Operand(object):
         if self.is_imm:
             return self.value != other
 
-        if isinstance(other, basestring):
+        if isinstance(other, six.string_types):
             other = other,
         if self.is_reg and self.reg in other:
             return 0
         if self.is_mem and self.reg in other:
             return 0
         return -1
+
+    def __eq__(self, other):
+        return not self.__cmp__(other)
 
     def __str__(self):
         if self.is_imm:
@@ -145,6 +149,9 @@ class Instruction(object):
         if self.operands == other.operands:
             return 0
         return -1
+
+    def __eq__(self, other):
+        return not self.__cmp__(other)
 
     def __str__(self):
         operands = []

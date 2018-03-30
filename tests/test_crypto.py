@@ -5,34 +5,34 @@
 from roach import aes, blowfish, des3, rc4, rsa, xor, base64, unhex
 
 def test_aes():
-    assert aes.ecb.decrypt("A"*16, "C"*32) == (
-        "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
-        "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
+    assert aes.ecb.decrypt(b"A"*16, b"C"*32) == (
+        b"I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
+        b"I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
     )
-    assert aes.ecb.decrypt("A"*16, data="C"*32) == (
-        "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
-        "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
+    assert aes.ecb.decrypt(b"A"*16, data=b"C"*32) == (
+        b"I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
+        b"I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
     )
 
-    assert aes.cbc.decrypt("A"*16, "B"*16, "C"*32) == (
-        "\x0b\xd4\x18\xa6\xf7\xbd\x1a\xff\x16\x1f\xd1A\xd4\xbe5\x9b"
-        "\n\xd5\x19\xa7\xf6\xbc\x1b\xfe\x17\x1e\xd0@\xd5\xbf4\x9a"
+    assert aes.cbc.decrypt(b"A"*16, b"B"*16, b"C"*32) == (
+        b"\x0b\xd4\x18\xa6\xf7\xbd\x1a\xff\x16\x1f\xd1A\xd4\xbe5\x9b"
+        b"\n\xd5\x19\xa7\xf6\xbc\x1b\xfe\x17\x1e\xd0@\xd5\xbf4\x9a"
     )
 
 def test_blowfish():
     assert blowfish(
-        "blowfish", "\x91;\x92\xa9\x85\x83\xb36\xbb\xac\xa8r0\xf1$\x19"
-    ) == "_hello world01!?"
+        b"blowfish", b"\x91;\x92\xa9\x85\x83\xb36\xbb\xac\xa8r0\xf1$\x19"
+    ) == b"_hello world01!?"
 
 def test_des():
     assert des3.cbc.decrypt(
-        "A"*8, "B"*8, "\x1d\xed\xc37pV\x89S\xac\xaeT\xaf\xa1\xcfW\xa3"
-    ) == "C"*16
+        b"A"*8, b"B"*8, b"\x1d\xed\xc37pV\x89S\xac\xaeT\xaf\xa1\xcfW\xa3"
+    ) == b"C"*16
 
 def test_rc4():
-    assert rc4.encrypt("Key", "Plaintext") == unhex("bbf316e8d940af0ad3")
-    assert rc4.decrypt("Wiki", "pedia") == unhex("1021bf0420")
-    assert rc4.decrypt("Secret", "Attack at dawn") == (
+    assert rc4.encrypt(b"Key", b"Plaintext") == unhex("bbf316e8d940af0ad3")
+    assert rc4.decrypt(b"Wiki", b"pedia") == unhex("1021bf0420")
+    assert rc4.decrypt(b"Secret", b"Attack at dawn") == (
         unhex("45a01f645fc35b383552544b9bf5")
     )
     assert rc4("hello", "world") == unhex("783ecd96cf")
@@ -50,7 +50,7 @@ def test_rsa():
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5cagCPVB7LiX3UI5N3WRQJqTLe5RPrhFj79/U
 7AY+ziYQrKhSaIQG7KWuLAZj4sKRyRyZK1te0Ekb1UGkYn3b1YTQtXojaakq5p4WyHFvhfNPjSlJ
 ClIt4QC/NZ9uS2FRee8ONEKODrcgevzcd+lbNy/mGAB7yW9XgP06YzfOyQIDAQAB
-    """)) == """
+    """)) == b"""
 -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5cagCPVB7LiX3UI5N3WRQJqTL
 e5RPrhFj79/U7AY+ziYQrKhSaIQG7KWuLAZj4sKRyRyZK1te0Ekb1UGkYn3b1YTQ
@@ -71,7 +71,7 @@ nTMtXoo1r77CjBv5q+zvMSzeFUl+ji9beSZbzl9rAvJOBw4v1Bj8EzPq5aYvEs7h9M66BbZjuyeH
 zp2sRBuxE6K13j1AIVHCK7gbVwlieHWKuE5d45ealzSsChwoxGlJcHlHBI62zQqo7SHbb2An72IS
 XtyKY18/3bYV4nv6ydeC9zgpVlNfGwgwP05Rkp7ldJsCz7uT6RAANV86JIp+65SCKs4gcgWWPIbn
 KJ4s7fs/3oy7tUSTdviZShGj2cJGiEIyIiA=
-    """)) == """
+    """)) == b"""
 -----BEGIN RSA PRIVATE KEY-----
 MIICXAIBAAKBgQC/ulKFvvVCMzneYlY2dP42R/oYGCpgJL5yPOqJsriixueU3eWC
 qKJYcXf4J4LXZDvKXY//zU9SyJ7fAmI+ioV6IXmyjI7ax5gUFz65V7GfXaxSfMOU
@@ -93,7 +93,7 @@ LTOdWP2zfXQX3kNz3d2ZWAVY3H4zliMqbKgoepqsuC6ecZXDfa6gnpEgCdie1Iqi
 BgIAAACkAABSU0ExAAQAAAEAAQChEcfAbVoL/jUnFMxI+xsR0zZUvMZ+9pgkLGpaxTiLRP6PZqx8
 lDdwqdb7gC+m5aOz+Uwms6RHrY/xRMYEXopj877qLancMtsiqcpASOYJWxWSgW+gQMJGldwn2H97
 AaHoqFlbn7NW6oNtpz4C7NotiggtVnqLdE8YyNfO6/gEpQ==
-""")) == """
+""")) == b"""
 -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClBPjrztfIGE90i3pWLQiKLdrs
 Aj6nbYPqVrOfW1mo6KEBe3/YJ9yVRsJAoG+BkhVbCeZIQMqpItsy3Kkt6r7zY4pe
@@ -102,11 +102,11 @@ SMwUJzX+C1ptwMcRoQIDAQAB
 -----END PUBLIC KEY-----
 """.strip()
 
-    assert rsa.import_key("") is None
+    assert rsa.import_key(b"") is None
 
     # This obviously doesn't make any sense, but it's to ensure that the
     # None or long wrapping is working, avoiding PyCrypto complains.
-    assert rsa.export_key(0x10001, 0x10001) == """
+    assert rsa.export_key(0x10001, 0x10001) == b"""
 -----BEGIN PUBLIC KEY-----
 MB4wDQYJKoZIhvcNAQEBBQADDQAwCgIDAQABAgMBAAE=
 -----END PUBLIC KEY-----

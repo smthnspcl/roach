@@ -3,6 +3,7 @@
 # See the file 'docs/LICENSE.txt' for copying permission.
 
 import ctypes
+import six
 
 from roach.string.bin import (
     IntWorker, Int8, UInt8, Int16, UInt16, Int32, UInt32, Int64, UInt64
@@ -32,7 +33,7 @@ class Structure(object):
                     type_ = mapping[type_.__class__] * type_.mul
                 else:
                     type_ = mapping[type_.__class__]
-            elif isinstance(type_, (int, long)):
+            elif isinstance(type_, six.integer_types):
                 type_ = ctypes.c_char * type_
             elif issubclass(type_, Structure):
                 # Keep track, likely for Python GC purposes.

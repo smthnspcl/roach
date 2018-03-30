@@ -4,6 +4,7 @@
 
 import base64
 import binascii
+import six
 
 def asciiz(s):
     return s.split("\x00")[0]
@@ -34,11 +35,11 @@ class Padding(object):
     def pad(self, s, block_size):
         length = block_size - len(s) % block_size
         if length == block_size:
-            padding = ""
+            padding = b""
         elif self.style == "pkcs7":
-            padding = "%c" % length * length
+            padding = b"%c" % length * length
         elif self.style == "null":
-            padding = "\x00" * length
+            padding = b"\x00" * length
         return s + padding
 
     __call__ = pkcs7 = pad
@@ -48,8 +49,11 @@ class Unpadding(object):
         self.style = style
 
     def unpad(self, s):
-        count = ord(s[-1]) if s else 0
-        if self.style == "pkcs7" and s[-count:] == s[-1] * count:
+        if six.PY2:
+            count = ord(s[-1]) if s else 0
+        else:
+            count = s[-1] if s else 0
+        if self.style == "pkcs7" and s[-count:] == b"%c" % count * count:
             return s[:-count]
         return s
 

@@ -24,14 +24,17 @@ setup(
     install_requires=[
         "click==6.6",
         "cryptography>=2.1",
-        "pefile2==1.2.11",
-        "pycrypto",
+        "pefile==2017.11.5",
+        "pycrypto==2.6.1",
     ],
     extras_require={
         ":sys_platform == 'win32'": [
             "capstone-windows==3.0.4",
         ],
         ":sys_platform == 'darwin'": [
+            "capstone==3.0.5rc2",
+        ],
+        ":sys_platform == 'linux'": [
             "capstone==3.0.5rc2",
         ],
         ":sys_platform == 'linux2'": [
