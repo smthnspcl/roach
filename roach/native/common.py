@@ -11,7 +11,7 @@ components = os.path.join(os.path.dirname(__file__), "components")
 is64bit = struct.calcsize("P") == 8
 ext = {
     "win32": "dll",
-    "linux2": "so",
+    "linux": "so",
     "darwin": "dylib",
 }[sys.platform]
 
