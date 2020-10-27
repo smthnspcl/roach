@@ -4,8 +4,9 @@
 
 def rol(value, count, bits=32):
     count = (bits - 1) & count
-    value = (value << count) | ((2**count - 1) & (value >> (bits - count)))
-    return value % 2**bits
+    value = (value << count) | ((2 ** count - 1) & (value >> (bits - count)))
+    return value % 2 ** bits
+
 
 def ror(value, count, bits=32):
     return rol(value, bits - count, bits)

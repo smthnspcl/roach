@@ -19,6 +19,7 @@ mapping = {
     UInt64: ctypes.c_ulonglong,
 }
 
+
 class Structure(object):
     # TODO Default value in Python, should we change this to 1?
     _pack_ = 0
@@ -32,7 +33,7 @@ class Structure(object):
                     type_ = mapping[type_.__class__] * type_.mul
                 else:
                     type_ = mapping[type_.__class__]
-            elif isinstance(type_, (int, long)):
+            elif isinstance(type_, (int, float)):
                 type_ = ctypes.c_char * type_
             elif issubclass(type_, Structure):
                 # Keep track, likely for Python GC purposes.

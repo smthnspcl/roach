@@ -4,6 +4,7 @@
 
 from Crypto.Cipher import ARC4
 
+
 class RC4(object):
     def __init__(self, key):
         self.key = key

@@ -4,39 +4,43 @@
 
 from roach import aes, blowfish, des3, rc4, rsa, xor, base64, unhex, rabbit
 
+
 def test_aes():
-    assert aes.ecb.decrypt("A"*16, "C"*32) == (
+    assert aes.ecb.decrypt("A" * 16, "C" * 32) == (
         "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
         "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
     )
-    assert aes.ecb.decrypt("A"*16, data="C"*32) == (
+    assert aes.ecb.decrypt("A" * 16, data="C" * 32) == (
         "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
         "I\x96Z\xe4\xb5\xffX\xbdT]\x93\x03\x96\xfcw\xd9"
     )
 
-    assert aes.cbc.decrypt("A"*16, "B"*16, "C"*32) == (
+    assert aes.cbc.decrypt("A" * 16, "B" * 16, "C" * 32) == (
         "\x0b\xd4\x18\xa6\xf7\xbd\x1a\xff\x16\x1f\xd1A\xd4\xbe5\x9b"
         "\n\xd5\x19\xa7\xf6\xbc\x1b\xfe\x17\x1e\xd0@\xd5\xbf4\x9a"
     )
 
     assert aes.ctr(
-        "hello world12345", "A"*16,
+        "hello world12345", "A" * 16,
         "\x803\xe3J#\xf4;\x13\x11+h\xf5\xba-\x9b\x05"
-    ) == "B"*16
+    ) == "B" * 16
 
     assert aes.import_key(
-        "\x08\x02\x00\x00\x0ef\x00\x00\x10\x00\x00\x00" + "A"*16
-    ) == ("AES-128", "A"*16)
+        "\x08\x02\x00\x00\x0ef\x00\x00\x10\x00\x00\x00" + "A" * 16
+    ) == ("AES-128", "A" * 16)
+
 
 def test_blowfish():
     assert blowfish(
         "blowfish", "\x91;\x92\xa9\x85\x83\xb36\xbb\xac\xa8r0\xf1$\x19"
     ) == "_hello world01!?"
 
+
 def test_des():
     assert des3.cbc.decrypt(
-        "A"*8, "B"*8, "\x1d\xed\xc37pV\x89S\xac\xaeT\xaf\xa1\xcfW\xa3"
-    ) == "C"*16
+        "A" * 8, "B" * 8, "\x1d\xed\xc37pV\x89S\xac\xaeT\xaf\xa1\xcfW\xa3"
+    ) == "C" * 16
+
 
 def test_rc4():
     assert rc4.encrypt("Key", "Plaintext") == unhex("bbf316e8d940af0ad3")
@@ -46,6 +50,7 @@ def test_rc4():
     )
     assert rc4("hello", "world") == unhex("783ecd96cf")
 
+
 def test_xor():
     assert xor(
         0xff, "\x97\x9a\x93\x93\x90\xdf\x88\x90\x8d\x93\x9b"
@@ -53,6 +58,7 @@ def test_xor():
     assert xor(
         "hi!", "\x00\x0cM\x04\x06\x01\x1f\x06S\x04\r"
     ) == "hello world"
+
 
 def test_rsa():
     assert rsa.import_key(base64("""
@@ -120,6 +126,7 @@ SMwUJzX+C1ptwMcRoQIDAQAB
 MB4wDQYJKoZIhvcNAQEBBQADDQAwCgIDAQABAgMBAAE=
 -----END PUBLIC KEY-----
 """.strip()
+
 
 def test_rabbit():
     key1 = "".join(chr(ch) for ch in (
@@ -203,10 +210,10 @@ def test_rabbit():
         0x17, 0x1C, 0xA7, 0x5F, 0x89, 0xFC, 0xCB, 0x9F,
     ))
 
-    assert rabbit(key1, None, "\x00"*48) == out1
-    assert rabbit(key2, None, "\x00"*48) == out2
-    assert rabbit(key3, None, "\x00"*48) == out3
+    assert rabbit(key1, None, "\x00" * 48) == out1
+    assert rabbit(key2, None, "\x00" * 48) == out2
+    assert rabbit(key3, None, "\x00" * 48) == out3
 
-    assert rabbit(key1, iv1, "\x00"*48) == out4
-    assert rabbit(key1, iv2, "\x00"*48) == out5
-    assert rabbit(key1, iv3, "\x00"*48) == out6
+    assert rabbit(key1, iv1, "\x00" * 48) == out4
+    assert rabbit(key1, iv2, "\x00" * 48) == out5
+    assert rabbit(key1, iv3, "\x00" * 48) == out6

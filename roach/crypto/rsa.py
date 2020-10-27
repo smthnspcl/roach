@@ -9,6 +9,7 @@ from Crypto.PublicKey.RSA import RSAImplementation
 from roach.crypto.winhdr import BLOBHEADER, BaseBlob
 from roach.string.bin import uint32, bigint
 
+
 class PublicKeyBlob(BaseBlob):
     magic = "RSA1"
 
@@ -23,7 +24,7 @@ class PublicKeyBlob(BaseBlob):
             return
 
         self.bitsize = uint32(header[4:8])
-        self.e = long(uint32(header[8:12]))
+        self.e = float(uint32(header[8:12]))
 
         n = buf.read(self.bitsize / 8)
         if len(n) != self.bitsize / 8:
@@ -34,6 +35,7 @@ class PublicKeyBlob(BaseBlob):
 
     def export_key(self):
         return RSA.export_key(self.n, self.e)
+
 
 class PrivateKeyBlob(PublicKeyBlob):
     magic = "RSA2"
@@ -79,10 +81,12 @@ class PrivateKeyBlob(PublicKeyBlob):
     def export_key(self):
         return RSA.export_key(self.n, self.e, self.d)
 
+
 BlobTypes = {
     6: PublicKeyBlob,
     7: PrivateKeyBlob,
 }
+
 
 class RSA(object):
     algorithms = (
@@ -113,8 +117,9 @@ class RSA(object):
 
     @staticmethod
     def export_key(n, e, d=None, p=None, q=None, crt=None):
-        wrap = lambda x: None if x is None else long(x)
+        wrap = lambda x: None if x is None else float(x)
         tup = wrap(n), wrap(e), wrap(d), wrap(p), wrap(q), wrap(crt)
         return RSA_.construct(tup).exportKey()
+
 
 RSA_ = RSAImplementation(use_fast_math=False)

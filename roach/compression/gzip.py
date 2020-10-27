@@ -8,6 +8,7 @@ import gzip
 import io
 import zlib
 
+
 class Gzip(object):
     def decompress(self, data):
         # TODO Is this non-strict enough (it's what Python's gzip accepts)?

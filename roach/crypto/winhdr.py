@@ -5,6 +5,7 @@
 from roach.string.bin import uint8, uint16, uint32
 from roach.structure import Structure
 
+
 class BLOBHEADER(Structure):
     _pack_ = 1
     _fields_ = [
@@ -13,6 +14,7 @@ class BLOBHEADER(Structure):
         ("wReserved", uint16),
         ("aiKeyAlg", uint32),
     ]
+
 
 class BaseBlob(object):
     def __init__(self):

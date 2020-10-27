@@ -7,16 +7,20 @@ from roach import (
     asciiz, pad, unpad, ipv4, pack, unpack, hex, unhex, base64, uleb128
 )
 
+
 def test_asciiz():
     assert asciiz("hello\x00world") == "hello"
+
 
 def test_hex():
     assert hex("hello") == "68656c6c6f"
     assert unhex("68656c6c6f") == "hello"
 
+
 def test_uleb128():
     assert uleb128("\x00") == (1, 0)
     assert uleb128("\xe5\x8e\x26") == (3, 624485)
+
 
 def test_pad():
     assert pad("hello!!1", 8) == "hello!!1"
@@ -25,15 +29,18 @@ def test_pad():
     assert pad.null("hi", 4) == "hi\x00\x00"
     assert pad.null("foo_bar!", 8) == "foo_bar!"
 
+
 def test_unpad():
     assert unpad("hello world!") == "hello world!"
     assert unpad("hello\x03\x03\x03") == "hello"
     assert unpad("hello\x02\x03\x03") == "hello\x02\x03\x03"
 
+
 def test_base64():
     assert base64("aGVsbG8=") == "hello"
     assert base64("aGVsbG8=") == base64.decode("aGVsbG8=")
     assert base64.encode("hello") == "aGVsbG8="
+
 
 def test_ipv4():
     assert str(ipv4("ABCD")) == "65.66.67.68"
@@ -55,6 +62,7 @@ def test_ipv4():
     assert ipv4("255.255.255.256") is None
 
     assert ipv4(0x7f000001) == "127.0.0.1"
+
 
 def test_bin():
     assert int8("") is None
@@ -93,12 +101,13 @@ def test_bin():
     assert uint64("HGFEDCBA") == 0x4142434445464748
     assert uint64("\xff\xff\xff\xff\xff\xff\xff\xff") == 0xffffffffffffffff
 
-    assert int64("A"*8 + "\xff"*8 + "B"*8) == (
+    assert int64("A" * 8 + "\xff" * 8 + "B" * 8) == (
         0x4141414141414141, -1, 0x4242424242424242
     )
-    assert uint64("A"*8 + "\xff"*8 + "B"*8) == (
+    assert uint64("A" * 8 + "\xff" * 8 + "B" * 8) == (
         0x4141414141414141, 0xffffffffffffffff, 0x4242424242424242
     )
+
 
 def test_bin_reverse():
     assert int8(0x12) == "\x12"
@@ -121,15 +130,17 @@ def test_bin_reverse():
     assert uint64(0x8877665544332211) == "\x11\x22\x33\x44\x55\x66\x77\x88"
     assert uint64(0xffffffffffffffff) == "\xff\xff\xff\xff\xff\xff\xff\xff"
 
+
 def test_bigint():
     assert bigint("ABCD", 40) is None
     assert bigint("ABCDE", 40) == 0x4544434241
     assert bigint(0x44434241, 40) == "ABCD\x00"
 
+
 def test_pack():
     assert pack(
         "HHIQ", 0x4141, 0x4141, 0x41414141, 0x4141414141414141
-    ) == "A"*16
-    assert unpack("HHIQ", "A"*16) == (
+    ) == "A" * 16
+    assert unpack("HHIQ", "A" * 16) == (
         0x4141, 0x4141, 0x41414141, 0x4141414141414141
     )

@@ -5,22 +5,27 @@
 import base64
 import binascii
 
+
 def asciiz(s):
     return s.split("\x00")[0]
+
 
 def hex(s):
     return binascii.hexlify(s)
 
+
 def unhex(s):
     return binascii.unhexlify(s)
 
+
 def uleb128(s):
     ret = 0
-    for idx in xrange(len(s)):
-        ret += (ord(s[idx]) & 0x7f) << (idx*7)
+    for idx in range(len(s)):
+        ret += (ord(s[idx]) & 0x7f) << (idx * 7)
         if ord(s[idx]) < 0x80:
             break
-    return idx+1, ret
+    return idx + 1, ret
+
 
 class Base64(object):
     def encode(self, s):
@@ -30,6 +35,7 @@ class Base64(object):
         return base64.b64decode(s)
 
     __call__ = decode
+
 
 class Padding(object):
     def __init__(self, style):
@@ -50,6 +56,7 @@ class Padding(object):
         return s + padding
 
     __call__ = pkcs7 = pad
+
 
 class Unpadding(object):
     def __init__(self, style):

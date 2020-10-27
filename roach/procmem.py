@@ -320,7 +320,7 @@ class ProcessMemoryPE(ProcessMemory):
         return r.addr + r.size
 
     def __getitem__(self, item):
-        if isinstance(item, (int, long)):
+        if isinstance(item, (int, float)):
             return self.readv(self.imgbase + item, 1)
 
         if item.start is None:

@@ -15,6 +15,7 @@ ext = {
     "darwin": "dylib",
 }[sys.platform]
 
+
 def load_library(name, windows_calling_convention="windll"):
     filepath = os.path.join(
         components, "%s-%s.%s" % (name, 64 if is64bit else 32, ext)

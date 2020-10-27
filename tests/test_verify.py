@@ -5,14 +5,17 @@
 
 from roach import verify
 
+
 def test_ascii():
     assert verify.ascii("hello world") is True
     assert verify.ascii("foobar\x00") is False
+
 
 def test_domain():
     assert verify.domain("apple.com") is True
     assert verify.domain("http://google.com") is False
     assert verify.domain(":\xb4\xa1") is False
+
 
 def test_url():
     assert verify.url("apple.com") is False

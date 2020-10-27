@@ -6,6 +6,7 @@ from click.testing import CliRunner
 
 from roach.main import procmem_list
 
+
 def test_procmem_list():
     result = CliRunner().invoke(procmem_list, ["tests/files/dummy.dmp"])
     assert not result.exit_code

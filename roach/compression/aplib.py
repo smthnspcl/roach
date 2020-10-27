@@ -4,6 +4,7 @@
 
 from roach.native.aplib import unpack
 
+
 class aPLib(object):
     def decompress(self, buf, length=None):
         return unpack(buf, length)

@@ -7,6 +7,7 @@ import io
 
 from roach import pe, base64, pe2procmem, procmem
 
+
 def test_pe_header():
     img = pe(base64("""
 TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -32,6 +33,7 @@ AJYAAAAAAAAAAAAAAAAAAEAAAEAK
     assert img.is64bit is False
     assert img.section(".text").VirtualAddress == 0x1000
 
+
 def test_calc_exe():
     p = pe(open("tests/files/calc.exe", "rb").read(), fast_load=False)
     assert p.is32bit is True
@@ -49,12 +51,14 @@ def test_calc_exe():
     assert len(bitmaps) == 1
     assert len(bitmaps[0]) == 22042
 
+
 def test_ollydbg_exe():
     p = pe(open("tests/files/ollydbg.exe", "rb").read(), fast_load=False)
     assert p.is32bit is True
     data = p.resource("DVCLAL")
     assert data.startswith("\xA2\x8C\xDF\x98")
     assert len(data) == 16
+
 
 def test_pe2procmem():
     a = pe(open("tests/files/calc.exe", "rb").read())

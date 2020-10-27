@@ -4,11 +4,12 @@
 
 from Crypto.Cipher import XOR
 
+
 def xor(key, data):
-    if not isinstance(data, basestring):
+    if not isinstance(data, str):
         raise RuntimeError("data value must be a string!")
 
-    if isinstance(key, (int, long)):
+    if isinstance(key, (int, float)):
         key = chr(key)
 
     return XOR.new(key).decrypt(data)

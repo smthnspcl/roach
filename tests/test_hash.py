@@ -4,6 +4,7 @@
 
 from roach import hex, crc32, md5, sha1, sha224, sha256, sha384, sha512
 
+
 def test_hash():
     assert crc32("hello") == 0x3610a686
     assert hex(md5("hello")) == "5d41402abc4b2a76b9719d911017c592"
@@ -20,5 +21,6 @@ def test_hash():
         "59e1748777448c69de6b800d7a33bbfb9ff1b463e44354c3553bcdb9c666fa90125a3c79f90397bdf5f6a13de828684f"
     )
     assert hex(sha512("hello")) == (
-        "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72323c3d99ba5c11d7c7acc6e14b8c5da0c4663475c2e5c3adef46f73bcdec043"
+        "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72323c3d99ba5c11d7c7acc6e14b8c5da0c4663475c2e5c"
+        "3adef46f73bcdec043"
     )

@@ -9,6 +9,7 @@ import tempfile
 
 from roach import procmem, procmempe, pad, pe, insn, PAGE_READWRITE
 
+
 def test_procmem_dummy_dmp():
     p = procmem("tests/files/dummy.dmp")
     assert len(p.regions) == 3
@@ -42,7 +43,7 @@ def test_procmem_dummy_dmp():
 
     p = procmem("tests/files/dummy.dmp", False)
     assert len(p.regions) == 3
-    assert p.readv(0x41410f00, 0x200) == "A"*0xf4 + "X"*4 + "A"*8 + "B"*0x100
+    assert p.readv(0x41410f00, 0x200) == "A" * 0xf4 + "X" * 4 + "A" * 8 + "B" * 0x100
     assert p.uint8p(p.v2p(0x41410fff)) == 0x41
     assert p.uint8v(0x41410fff) == 0x41
     assert p.uint16p(p.v2p(0x4141100f)) == 0x4242
@@ -57,6 +58,7 @@ def test_procmem_dummy_dmp():
     assert p.uint16v(0x1000) is None
     assert p.uint32v(0x1000) is None
     assert p.uint64v(0x1000) is None
+
 
 def test_calc_dmp():
     p = procmem("tests/files/calc.dmp")
@@ -86,15 +88,16 @@ def test_calc_dmp():
     assert p.imgbase == 0xd0000
     assert p.pe.is32bit is True
 
+
 def test_methods():
     fd, filepath = tempfile.mkstemp()
-    os.write(fd, "".join((
+    os.write(fd, b"".join((
         struct.pack("QIIII", 0x401000, 0x1000, 0, 0, PAGE_READWRITE),
         pad.null("foo\x00bar thisis0test\n hAAAA\xc3", 0x1000),
     )))
     os.close(fd)
     buf = procmem(filepath)
-    assert buf.readv(0x401000, 0x1000).endswith("\x00"*0x100)
+    assert buf.readv(0x401000, 0x1000).endswith("\x00" * 0x100)
     assert list(buf.regexv("thisis(.*)test")) == [0x401008]
     assert list(buf.regexv(" ")) == [0x401007, 0x401014]
     assert list(buf.regexv(" ", 0x401000, 0x10)) == [0x401007]
@@ -103,6 +106,7 @@ def test_methods():
         insn("push", 0x41414141, addr=0x401015),
         insn("ret", addr=0x40101a),
     ]
+
 
 def test_mmap():
     fd, filepath = tempfile.mkstemp()

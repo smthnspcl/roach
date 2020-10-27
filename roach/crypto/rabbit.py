@@ -6,19 +6,23 @@ import struct
 
 from roach.crypto.xor import xor
 
-def rotl(v,n):
-    return (((v<<n)&0xffffffff) | ((v>>(32-n))&0xffffffff))
+
+def rotl(v, n):
+    return (((v << n) & 0xffffffff) | ((v >> (32 - n)) & 0xffffffff))
+
 
 class State(object):
     def __init__(self):
-        self.x = [0]*8
-        self.c = [0]*8
+        self.x = [0] * 8
+        self.c = [0] * 8
         self.carry = 0
+
 
 class Context(object):
     def __init__(self):
         self.m = State()
         self.w = State()
+
 
 class Rabbit(object):
     def __init__(self, key, iv):
@@ -26,13 +30,13 @@ class Rabbit(object):
         self.set_key(key)
         iv and self.set_iv(iv)
 
-    def g_func(self,x):
+    def g_func(self, x):
         x = x & 0xffffffff
         x = (x * x) & 0xffffffffffffffff
         result = (x >> 32) ^ (x & 0xffffffff)
         return result
 
-    def set_key(self,key):
+    def set_key(self, key):
         # Four subkeys.
         key0, key1, key2, key3 = struct.unpack("IIII", key[:16])
 
@@ -59,11 +63,11 @@ class Rabbit(object):
         s.carry = 0
 
         # Iterate system four times.
-        for i in xrange(4):
-            self.next_state(self.ctx.m);
+        for i in range(4):
+            self.next_state(self.ctx.m)
 
         # Modify the counters.
-        for i in xrange(8):
+        for i in range(8):
             self.ctx.m.c[i] ^= self.ctx.m.x[(i + 4) & 7]
 
         # Copy master instance to work instance.
@@ -78,59 +82,59 @@ class Rabbit(object):
 
     def set_iv(self, iv):
         # Generate four subvectors.
-        v = [0]*4
+        v = [0] * 4
         v[0], v[2] = struct.unpack("II", iv[:8])
         v[1] = (v[0] >> 16) | (v[2] & 0xffff0000)
         v[3] = ((v[2] << 16) | (v[0] & 0x0000ffff)) & 0xffffffff
 
         # Modify work's counter values.
-        for i in xrange(8):
+        for i in range(8):
             self.ctx.w.c[i] = self.ctx.m.c[i] ^ v[i & 3]
 
         # Copy state variables but not carry flag.
         self.ctx.w.x = self.ctx.m.x[:]
 
         # Iterate system four times.
-        for i in xrange(4):
-            self.next_state(self.ctx.w);
+        for i in range(4):
+            self.next_state(self.ctx.w)
 
     def next_state(self, state):
-        g = [0]*8
+        g = [0] * 8
         x = [0x4D34D34D, 0xD34D34D3, 0x34D34D34]
 
         # Calculate new counter values.
-        for i in xrange(8):
+        for i in range(8):
             tmp = state.c[i]
             state.c[i] = (state.c[i] + x[i % 3] + state.carry) & 0xffffffff
             state.carry = (state.c[i] < tmp)
 
         # Calculate the g-values.
-        for i in xrange(8):
+        for i in range(8):
             g[i] = self.g_func(state.x[i] + state.c[i])
 
         # Calculate new state values.
         j = 7
-        for i in xrange(0, 8, 2):
+        for i in range(0, 8, 2):
             state.x[i + 0] = (
-                g[i + 0] + rotl(g[j], 16) + rotl(g[j - 1], 16)
-            ) & 0xffffffff
+                                     g[i + 0] + rotl(g[j], 16) + rotl(g[j - 1], 16)
+                             ) & 0xffffffff
             j = (j + 1) & 7
             state.x[i + 1] = (
-                g[i + 1] + rotl(g[j], 8) + g[j - 1]
-            ) & 0xffffffff
+                                     g[i + 1] + rotl(g[j], 8) + g[j - 1]
+                             ) & 0xffffffff
             j = (j + 1) & 7
 
     def encrypt(self, msg):
-        x, ret = [0]*4, []
-        for off in xrange(0, len(msg) + 15, 16):
+        x, ret = [0] * 4, []
+        for off in range(0, len(msg) + 15, 16):
             self.next_state(self.ctx.w)
             x[0], x[1] = self.ctx.w.x[0], self.ctx.w.x[2]
             x[2], x[3] = self.ctx.w.x[4], self.ctx.w.x[6]
-            x[0] ^= (self.ctx.w.x[5] >> 16) ^ (self.ctx.w.x[3] << 16) % 2**32
-            x[1] ^= (self.ctx.w.x[7] >> 16) ^ (self.ctx.w.x[5] << 16) % 2**32
-            x[2] ^= (self.ctx.w.x[1] >> 16) ^ (self.ctx.w.x[7] << 16) % 2**32
-            x[3] ^= (self.ctx.w.x[3] >> 16) ^ (self.ctx.w.x[1] << 16) % 2**32
-            ret.append(xor(struct.pack("IIII", *x), msg[off:off+16]))
+            x[0] ^= (self.ctx.w.x[5] >> 16) ^ (self.ctx.w.x[3] << 16) % 2 ** 32
+            x[1] ^= (self.ctx.w.x[7] >> 16) ^ (self.ctx.w.x[5] << 16) % 2 ** 32
+            x[2] ^= (self.ctx.w.x[1] >> 16) ^ (self.ctx.w.x[7] << 16) % 2 ** 32
+            x[3] ^= (self.ctx.w.x[3] >> 16) ^ (self.ctx.w.x[1] << 16) % 2 ** 32
+            ret.append(xor(struct.pack("IIII", *x), msg[off:off + 16]))
         return "".join(ret)
 
     decrypt = encrypt

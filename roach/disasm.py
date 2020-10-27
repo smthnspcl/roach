@@ -8,6 +8,7 @@ Memory = collections.namedtuple(
     "Memory", ("size", "base", "scale", "index", "disp")
 )
 
+
 class Operand(object):
     # These are initializes the first time disasm() is called, see also below.
     _x86_op_imm = None
@@ -73,7 +74,7 @@ class Operand(object):
         if self.is_imm:
             return self.value != other
 
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             other = other,
         if self.is_reg and self.reg in other:
             return 0
@@ -84,7 +85,7 @@ class Operand(object):
     def __str__(self):
         if self.is_imm:
             # TODO x86_64 support.
-            return "0x%08x" % (self.value % 2**32)
+            return "0x%08x" % (self.value % 2 ** 32)
         if self.is_reg:
             return self.reg
         if self.is_mem:
@@ -95,8 +96,9 @@ class Operand(object):
                 s.append("%d*%s" % (m.scale, m.index))
             if m.disp:
                 # TODO x86_64 support.
-                s.append("0x%08x" % (m.disp % 2**32))
+                s.append("0x%08x" % (m.disp % 2 ** 32))
             return "%s [%s]" % (m.size, "+".join(s))
+
 
 class Instruction(object):
     def __init__(self, mnem=None, op1=None, op2=None, op3=None, addr=None):
@@ -157,6 +159,7 @@ class Instruction(object):
             return "%s %s" % (self.mnem, ", ".join(operands))
         return self.mnem
 
+
 class Disassemble(object):
     def disassemble(self, data, addr):
         import capstone
@@ -185,5 +188,6 @@ class Disassemble(object):
         return self.__call__(*args, **kwargs)
 
     __call__ = init_once
+
 
 disasm = Disassemble()

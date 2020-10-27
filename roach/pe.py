@@ -8,6 +8,7 @@ import struct
 
 from roach.procmem import ProcessMemoryPE, ProcessMemory
 
+
 class OurSectionStructure(pefile.SectionStructure):
     def get_data(self, start=None, length=None):
         if not isinstance(self.pe.__data__, ProcessMemoryPE):
@@ -15,8 +16,10 @@ class OurSectionStructure(pefile.SectionStructure):
         data = self.pe.__data__
         return data.readv(data.imgbase + start, length)
 
+
 OrigSectionStructure = pefile.SectionStructure
 pefile.SectionStructure = OurSectionStructure
+
 
 class PE(object):
     """Wrapper around pefile.PE; accepts either a string (raw file contents) or
@@ -60,7 +63,7 @@ class PE(object):
     @property
     def is64bit(self):
         return (
-            self.optional_header.Magic == pefile.OPTIONAL_HEADER_MAGIC_PE_PLUS
+                self.optional_header.Magic == pefile.OPTIONAL_HEADER_MAGIC_PE_PLUS
         )
 
     def section(self, name):
@@ -73,7 +76,7 @@ class PE(object):
         name_int = lambda e1, e2, e3: e2.struct.Name == name
         type_int = lambda e1, e2, e3: e1.id == type_id
 
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             if name.startswith("RT_"):
                 compare = type_int
                 type_id = pefile.RESOURCE_TYPE[name]
@@ -95,6 +98,7 @@ class PE(object):
             return next(self.resources(name))
         except StopIteration:
             pass
+
 
 def pe2procmem(data):
     """Translate a PE file into a procmem file."""

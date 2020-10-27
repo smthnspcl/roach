@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from roach.crypto.winhdr import BLOBHEADER, BaseBlob
 from roach.string.bin import uint32
 
+
 class PlaintextKeyBlob(BaseBlob):
     types = {
         16: "AES-128",
@@ -31,9 +32,11 @@ class PlaintextKeyBlob(BaseBlob):
     def export_key(self):
         return self.types[len(self.key)], self.key
 
+
 BlobTypes = {
     8: PlaintextKeyBlob,
 }
+
 
 class AES(object):
     algorithms = (

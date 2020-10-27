@@ -4,6 +4,7 @@
 
 from roach import disasm
 
+
 class TestDisasm(object):
     streams = "".join((
         # mov esi, [edi+4]

@@ -5,6 +5,7 @@
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
+
 class DES3(object):
     modes = {
         "cbc": lambda iv: modes.CBC(iv),
